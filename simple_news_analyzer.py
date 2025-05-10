@@ -34,7 +34,7 @@ logging.basicConfig(
 logger = logging.getLogger("news_analyzer")
 
 # 全局配置
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-51cc932022e14b978ff8cb4bac82310f")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "nonono")
 OUTPUT_DIR = Path("./news_reports")
 OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
