@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 新闻爬取与分析工具{% endblock %}
+
+{% block content %}
+<div id="app" class="row">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card shadow-sm">
+            <div class="card-body text-center p-5">
+                <h1 class="card-title mb-4">
+                    <i class="fas fa-newspaper text-primary me-2"></i>
+                    新闻爬取与分析工具
+                </h1>
+                <p class="lead">
+                    欢迎使用新闻爬取与分析工具，这是一个架构化的新闻爬取与分析工具，可以从新浪新闻网站爬取文章，并使用DeepSeek模型生成分析报告。
+                </p>
+                
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body text-center">
+                                <i class="fas fa-spider fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">爬取新闻</h5>
+                                <p class="card-text">从新浪新闻网站爬取各类文章</p>
+                                <a href="/scraper" class="btn btn-primary mt-3">
+                                    开始爬取
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-success">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file-alt fa-3x text-success mb-3"></i>
+                                <h5 class="card-title">查看报告</h5>
+                                <p class="card-text">查看已生成的分析报告</p>
+                                <a href="/reports" class="btn btn-success mt-3">
+                                    浏览报告
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-5" v-if="stats.loaded">
+                    <h5><i class="fas fa-info-circle me-2"></i>系统统计</h5>
+                    <div class="row text-center mt-3">
+                        <div class="col-6">
+                            <h4>[[ stats.report_count ]]</h4>
+                            <p>已生成报告</p>
+                        </div>
+                        <div class="col-6">
+                            <h4>[[ stats.category_count ]]</h4>
+                            <p>支持的分类</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+const { createApp } = Vue;
+
+createApp({
+    delimiters: ['[[', ']]'],
+    data() {
+        return {
+            stats: {
+                loaded: false,
+                report_count: 0,
+                category_count: 0
+            }
+        }
+    },
+    mounted() {
+        this.loadStats();
+    },
+    methods: {
+        async loadStats() {
+            try {
+                // 加载报告统计
+                const reportsResponse = await axios.get('/api/reports/list');
+                if (reportsResponse.data.success) {
+                    this.stats.report_count = reportsResponse.data.data.length;
+                }
+                
+                // 加载分类统计
+                const categoriesResponse = await axios.get('/api/news/categories');
+                if (categoriesResponse.data.success) {
+                    this.stats.category_count = categoriesResponse.data.data.length;
+                }
+                
+                this.stats.loaded = true;
+            } catch (error) {
+                console.error('加载统计信息失败:', error);
+            }
+        }
+    }
+}).mount('#app');
+</script>
+{% endblock %} 

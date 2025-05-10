@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}爬虫 - 新闻爬取与分析工具{% endblock %}
+
+{% block content %}
+<div id="app">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-cog me-2"></i>爬虫配置
+                </div>
+                <div class="card-body">
+                    <form @submit.prevent="startScrape">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="category" class="form-label">新闻分类</label>
+                                    <select class="form-select" id="category" v-model="params.category">
+                                        <option v-for="category in categories" :value="category">
+                                            [[ category ]]
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="limit" class="form-label">爬取数量</label>
+                                    <input type="number" class="form-control" id="limit" 
+                                           v-model="params.limit" min="1" max="20">
+                                    <div class="form-text">建议范围: 1-20篇</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <div class="mb-3 w-100">
+                                    <button type="submit" class="btn btn-primary w-100" 
+                                            :disabled="loading.scrape">
+                                        <i class="fas fa-spider me-2"></i>
+                                        <span v-if="loading.scrape">爬取中...</span>
+                                        <span v-else>开始爬取</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 爬取结果 -->
+            <div class="card shadow-sm mb-4" v-if="articles.length > 0">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-newspaper me-2"></i>爬取结果
+                    <span class="badge bg-light text-dark float-end">
+                        共 [[ articles.length ]] 篇文章
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>标题</th>
+                                    <th>来源</th>
+                                    <th>发布时间</th>
+                                    <th>作者</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(article, index) in articles" :key="article.id">
+                                    <td>[[ index + 1 ]]</td>
+                                    <td>
+                                        <a :href="article.url" target="_blank">
+                                            [[ article.title ]]
+                                        </a>
+                                    </td>
+                                    <td>[[ article.source ]]</td>
+                                    <td>[[ formatDateTime(article.published_time) ]]</td>
+                                    <td>[[ article.author || '-' ]]</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                @click="previewArticle(article)"
+                                                aria-label="预览文章">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button class="btn btn-success" @click="startAnalyze" 
+                                :disabled="loading.analyze">
+                            <i class="fas fa-brain me-2"></i>
+                            <span v-if="loading.analyze">分析中...</span>
+                            <span v-else>分析文章</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 分析结果 -->
+            <div class="card shadow-sm" v-if="report.content">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-file-alt me-2"></i>分析报告
+                </div>
+                <div class="card-body">
+                    <div class="markdown-content p-3" v-html="renderedReport"></div>
+                    
+                    <div class="text-center mt-4">
+                        <a class="btn btn-outline-primary me-2" :href="report.report_path" 
+                           target="_blank">
+                            <i class="fas fa-external-link-alt me-2"></i>查看完整报告
+                        </a>
+                        <a class="btn btn-outline-success" href="/reports">
+                            <i class="fas fa-list me-2"></i>查看所有报告
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 文章预览模态框 -->
+    <div class="modal fade" id="articlePreviewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" v-if="currentArticle">
+                        [[ currentArticle.title ]]
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body" v-if="currentArticle">
+                    <div class="mb-3">
+                        <strong>来源:</strong> [[ currentArticle.source ]]
+                        <span v-if="currentArticle.author">
+                            - [[ currentArticle.author ]]
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>发布时间:</strong> [[ formatDateTime(currentArticle.published_time) ]]
+                    </div>
+                    <div class="mb-3">
+                        <strong>原文链接:</strong>
+                        <a :href="currentArticle.url" target="_blank">[[ currentArticle.url ]]</a>
+                    </div>
+                    <hr>
+                    <div class="content-preview">
+                        [[ currentArticle.content_preview ]]
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <a :href="currentArticle.url" target="_blank" class="btn btn-primary">
+                        查看原文
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+const { createApp } = Vue;
+
+createApp({
+    delimiters: ['[[', ']]'],
+    data() {
+        return {
+            categories: [],
+            params: {
+                category: '财经',
+                limit: 5
+            },
+            articles: [],
+            report: {
+                content: '',
+                report_path: ''
+            },
+            currentArticle: null,
+            loading: {
+                scrape: false,
+                analyze: false
+            },
+            modal: null
+        }
+    },
+    computed: {
+        renderedReport() {
+            return marked.parse(this.report.content);
+        }
+    },
+    mounted() {
+        this.loadCategories();
+        this.modal = new bootstrap.Modal(document.getElementById('articlePreviewModal'));
+    },
+    methods: {
+        async loadCategories() {
+            try {
+                const response = await axios.get('/api/news/categories');
+                if (response.data.success) {
+                    this.categories = response.data.data;
+                }
+            } catch (error) {
+                console.error('加载分类失败:', error);
+                alert('加载分类失败，请刷新页面重试');
+            }
+        },
+        
+        async startScrape() {
+            this.loading.scrape = true;
+            try {
+                const response = await axios.post('/api/news/scrape', this.params);
+                if (response.data.success) {
+                    this.articles = response.data.data.articles;
+                } else {
+                    alert('爬取失败: ' + response.data.message);
+                }
+            } catch (error) {
+                console.error('爬取失败:', error);
+                alert('爬取失败: ' + (error.response?.data?.message || error.message));
+            } finally {
+                this.loading.scrape = false;
+            }
+        },
+        
+        async startAnalyze() {
+            this.loading.analyze = true;
+            try {
+                const response = await axios.post('/api/news/analyze', this.params);
+                if (response.data.success) {
+                    this.report = response.data.data;
+                } else {
+                    alert('分析失败: ' + response.data.message);
+                }
+            } catch (error) {
+                console.error('分析失败:', error);
+                alert('分析失败: ' + (error.response?.data?.message || error.message));
+            } finally {
+                this.loading.analyze = false;
+            }
+        },
+        
+        previewArticle(article) {
+            this.currentArticle = article;
+            this.modal.show();
+        },
+        
+        formatDateTime(dateTimeStr) {
+            if (!dateTimeStr) return '-';
+            const date = new Date(dateTimeStr);
+            return date.toLocaleString('zh-CN');
+        }
+    }
+}).mount('#app');
+</script>
+{% endblock %} 

@@ -11,6 +11,7 @@
 - 模块化设计，易于扩展和维护
 - 完善的错误处理和日志记录
 - 支持自定义配置和参数调整
+- **Web界面**：提供直观易用的网页界面
 
 ## 目录结构
 
@@ -34,10 +35,27 @@ newspaper-mcp/
 │       ├── file.py            # 文件操作工具
 │       ├── http.py            # HTTP请求工具
 │       └── logger.py          # 日志工具
+├── web/                       # Web应用目录
+│   ├── api/                   # API定义
+│   │   ├── news_api.py        # 新闻相关API
+│   │   └── report_api.py      # 报告相关API
+│   ├── static/                # 静态资源
+│   │   ├── css/               # 样式文件
+│   │   ├── js/                # JavaScript文件
+│   │   └── img/               # 图片资源
+│   ├── templates/             # HTML模板
+│   │   ├── base.html          # 基础模板
+│   │   ├── index.html         # 首页
+│   │   ├── scraper.html       # 爬虫页面
+│   │   └── reports.html       # 报告页面
+│   ├── __init__.py            # Web应用初始化
+│   └── routes.py              # 路由定义
 ├── logs/                      # 日志目录
 ├── news_reports/              # 分析报告输出目录
-├── main.py                    # 主入口文件
-├── requirements.txt           # 依赖列表
+├── main.py                    # 命令行主入口文件
+├── web_main.py                # Web服务入口文件
+├── requirements.txt           # 核心依赖
+├── web_requirements.txt       # Web应用依赖
 └── README.md                  # 项目说明
 ```
 
@@ -49,11 +67,8 @@ newspaper-mcp/
 - 操作系统：Windows/Linux/macOS
 - 网络连接：需要能够访问新浪新闻网站和DeepSeek API
 - 依赖包：
-  - requests>=2.28.2
-  - beautifulsoup4>=4.11.1
-  - html5lib>=1.1
-  - lxml>=4.9.2
-  - openai>=1.3.0
+  - 核心依赖：requests, beautifulsoup4, html5lib, lxml, openai
+  - Web界面依赖：flask, flask-cors, waitress, python-dotenv
 
 ### 详细安装步骤
 
@@ -61,8 +76,8 @@ newspaper-mcp/
 
    ```bash
    # 使用git克隆
-   git clone https://github.com/guangxiangdebizi/LLM-Newspaper-reporter.git
-   cd LLM-Newspaper-reporter
+   git clone https://github.com/yourusername/newspaper-mcp.git
+   cd newspaper-mcp
    
    # 或者直接下载ZIP文件并解压
    ```
@@ -90,7 +105,11 @@ newspaper-mcp/
 3. **安装依赖包**
 
    ```bash
+   # 安装核心依赖
    pip install -r requirements.txt
+   
+   # 安装Web界面依赖（如需使用Web界面）
+   pip install -r web_requirements.txt
    ```
 
 4. **配置DeepSeek API密钥**
@@ -150,7 +169,9 @@ newspaper-mcp/
      OUTPUT_DIR = Path("./news_reports")  # 修改为你的目标目录
      ```
 
-### 使用方法
+## 使用方法
+
+### 命令行模式
 
 1. **基本使用**
 
@@ -190,6 +211,41 @@ newspaper-mcp/
    - `--debug`: 调试模式
      - 不指定：仅显示重要信息
      - 指定：显示详细日志
+
+### Web界面模式
+
+1. **启动Web服务**
+
+   ```bash
+   # 开发模式
+   python web_main.py --debug
+   
+   # 生产模式
+   python web_main.py
+   ```
+
+2. **访问Web界面**
+   
+   在浏览器中打开: http://127.0.0.1:5000
+
+3. **使用Web界面**
+
+   - **首页**: 概述和快速入口
+   - **爬虫页面**: 爬取文章和生成分析报告
+   - **报告页面**: 查看和搜索已生成的报告
+
+4. **参数说明**
+
+   - `--host`: 监听地址
+     - 默认值：127.0.0.1
+     - 使用 0.0.0.0 可以从外部访问
+   
+   - `--port`: 监听端口
+     - 默认值：5000
+   
+   - `--debug`: 调试模式
+     - 不指定：生产模式
+     - 指定：开发模式，自动重载
 
 ### 输出示例
 
@@ -234,6 +290,37 @@ newspaper-mcp/
    - 确认文章内容是否完整
    - 查看日志了解具体错误
 
+4. **Web界面问题**
+   - 确保已安装所有Web依赖 (`pip install -r web_requirements.txt`)
+   - 检查端口是否被占用，如被占用请使用 `--port` 参数更改端口
+   - 查看控制台输出的错误信息
+
+## Web界面配置
+
+1. **外部访问**
+   
+   默认情况下，Web服务只能从本机访问。要允许从其他设备访问：
+   
+   ```bash
+   python web_main.py --host 0.0.0.0
+   ```
+
+2. **更改端口**
+   
+   如果默认端口5000被占用：
+   
+   ```bash
+   python web_main.py --port 8080
+   ```
+
+3. **前端样式定制**
+   
+   如需自定义样式，编辑 `web/static/css/style.css` 文件。
+
+4. **网页模板修改**
+   
+   页面模板位于 `web/templates/` 目录，可以根据需要修改。
+
 ## 扩展指南
 
 ### 添加新的新闻源
@@ -274,6 +361,10 @@ newspaper-mcp/
    }
    ```
 
+4. 在Web界面中集成新的新闻源（如需要）：
+   - 修改 `web/api/news_api.py` 添加对新新闻源的支持
+   - 更新前端界面以显示新的选项
+
 ### 添加新的分析模型
 
 1. 在`app/analyzers`目录下创建新的分析器类：
@@ -300,6 +391,10 @@ newspaper-mcp/
    }
    ```
 
+3. 在Web界面中集成新的分析模型（如需要）：
+   - 修改 `web/api/news_api.py` 添加对新分析模型的支持
+   - 更新前端界面以允许选择分析模型
+
 ## 许可证
 
 MIT
@@ -314,8 +409,8 @@ MIT
 
 ## 联系方式
 
-- 项目维护者：[陈星宇]
-- 邮箱：[guangxiangdebizi@gmail.com]
-- 项目地址：[https://github.com/guangxiangdebizi/LLM-Newspaper-reporter]
+- 项目维护者：[Your Name]
+- 邮箱：[your.email@example.com]
+- 项目地址：[https://github.com/yourusername/newspaper-mcp]
 
 欢迎提交问题和贡献代码！ 
