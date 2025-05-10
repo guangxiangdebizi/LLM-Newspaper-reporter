@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Dict, List
 
 # API密钥配置
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-51cc932022e14b978ff8cb4bac82310f")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "your api here")
 
 # 输出目录配置
 BASE_DIR = Path(__file__).parent.parent.parent
