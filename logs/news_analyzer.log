@@ -1,0 +1,42 @@
+2025-05-10 12:25:42,431 - news_analyzer - INFO - 开始爬取 财经 分类的新闻，数量: 5
+2025-05-10 12:25:42,431 - news_analyzer - INFO - 爬取分类 '财经'
+2025-05-10 12:25:42,431 - news_analyzer - INFO - 获取文章URL: https://finance.sina.com.cn/
+2025-05-10 12:25:47,947 - news_analyzer - INFO - 找到 5 篇文章
+2025-05-10 12:25:47,948 - news_analyzer - INFO - 在分类 '财经' 中找到 5 篇文章
+2025-05-10 12:25:47,948 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/edu/2025-03-19/doc-ineqeanw1773885.shtml
+2025-05-10 12:25:51,917 - news_analyzer - INFO - 成功爬取文章: AI时代，教你用大模型“躺赚”投资红利！...
+2025-05-10 12:25:51,918 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/roll/2025-05-09/doc-inevxeue7913960.shtml
+2025-05-10 12:25:57,514 - news_analyzer - INFO - 成功爬取文章: A股再现离婚案！珠城科技55岁实控人离婚...
+2025-05-10 12:25:57,514 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/roll/2025-05-09/doc-inevxeui9562925.shtml
+2025-05-10 12:26:01,074 - news_analyzer - INFO - 成功爬取文章: 建发股份入局天邦食品重整 股价异动尾盘拉...
+2025-05-10 12:26:01,074 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/stock/relnews/cn/2025-05-09/doc-inevwynh8025904.shtml
+2025-05-10 12:26:04,887 - news_analyzer - INFO - 成功爬取文章: A股首例竞争性要约收购开牌 金帝石油落败...
+2025-05-10 12:26:04,887 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/money/future/fmnews/2025-05-09/doc-inevxeuh4701318.shtml
+2025-05-10 12:26:09,240 - news_analyzer - INFO - 成功爬取文章: 贵金属市场波动加大 上金所发通知提示风险...
+2025-05-10 12:26:09,240 - news_analyzer - INFO - 成功爬取 5 篇文章
+2025-05-10 12:26:09,240 - news_analyzer - INFO - 开始分析文章...
+2025-05-10 12:26:10,068 - news_analyzer - INFO - 调用DeepSeek API进行分析
+2025-05-10 12:26:10,315 - news_analyzer - ERROR - 调用DeepSeek API出错: Error code: 400 - {'error': {'message': 'Invalid max_tokens value, the valid range of max_tokens is [1, 8192]', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_request_error'}}
+2025-05-10 12:26:10,315 - news_analyzer - ERROR - 分析失败
+2025-05-10 12:27:30,117 - news_analyzer - INFO - 开始爬取 财经 分类的新闻，数量: 5
+2025-05-10 12:27:30,117 - news_analyzer - INFO - 爬取分类 '财经'
+2025-05-10 12:27:30,117 - news_analyzer - INFO - 获取文章URL: https://finance.sina.com.cn/
+2025-05-10 12:27:33,109 - news_analyzer - INFO - 找到 5 篇文章
+2025-05-10 12:27:33,109 - news_analyzer - INFO - 在分类 '财经' 中找到 5 篇文章
+2025-05-10 12:27:33,109 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/edu/2025-03-19/doc-ineqeanw1773885.shtml
+2025-05-10 12:27:37,197 - news_analyzer - INFO - 成功爬取文章: AI时代，教你用大模型“躺赚”投资红利！...
+2025-05-10 12:27:37,198 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/roll/2025-05-09/doc-inevxeue7913960.shtml
+2025-05-10 12:27:42,496 - news_analyzer - INFO - 成功爬取文章: A股再现离婚案！珠城科技55岁实控人离婚...
+2025-05-10 12:27:42,496 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/roll/2025-05-09/doc-inevxeui9562925.shtml
+2025-05-10 12:27:46,243 - news_analyzer - INFO - 成功爬取文章: 建发股份入局天邦食品重整 股价异动尾盘拉...
+2025-05-10 12:27:46,243 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/stock/relnews/cn/2025-05-09/doc-inevwynh8025904.shtml
+2025-05-10 12:27:51,260 - news_analyzer - INFO - 成功爬取文章: A股首例竞争性要约收购开牌 金帝石油落败...
+2025-05-10 12:27:51,260 - news_analyzer - INFO - 爬取文章: https://finance.sina.com.cn/money/future/fmnews/2025-05-09/doc-inevxeuh4701318.shtml
+2025-05-10 12:27:55,726 - news_analyzer - INFO - 成功爬取文章: 贵金属市场波动加大 上金所发通知提示风险...
+2025-05-10 12:27:55,726 - news_analyzer - INFO - 成功爬取 5 篇文章
+2025-05-10 12:27:55,726 - news_analyzer - INFO - 开始分析文章...
+2025-05-10 12:27:56,734 - news_analyzer - INFO - 调用DeepSeek API进行分析
+2025-05-10 12:29:01,490 - news_analyzer - INFO - 分析完成
+2025-05-10 12:29:01,490 - news_analyzer - INFO - 分析完成
+2025-05-10 12:29:01,490 - news_analyzer - INFO - 报告已保存到: E:\CONDATest\pythonProject\newspaper-mcp\news_reports\财经_分析报告_20250510_122901.md
+2025-05-10 12:29:01,490 - news_analyzer - INFO - 分析报告已保存到: E:\CONDATest\pythonProject\newspaper-mcp\news_reports\财经_分析报告_20250510_122901.md
